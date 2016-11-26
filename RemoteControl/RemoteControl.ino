@@ -149,7 +149,7 @@ void loop()   /****** LOOP: RUNS CONSTANTLY ******/
   }
 
   // Send again after delay. When working OK, change to something like 100
-  delay(100);
+  delay(5);
 
 }//--(end main loop )---
 

@@ -103,18 +103,19 @@ void setup() {
   // Start the radio listening for data
   radio.startListening();
 
-//  Serial.print("defPosX "); 
-//  Serial.print(defPosX);
-//  Serial.print(" defPosY "); 
-//  Serial.println(defPosY);
+  Serial.print("defPosX "); 
+  Serial.print(defPosX);
+  Serial.print(" defPosY "); 
+  Serial.println(defPosY);
 }
 
 void loop() 
 {
   SoftwareServo::refresh();//refreshes servo to keep them updating
+  
   if ( radio.available())
   {
-
+    
     while (radio.available())   // While there is data ready to be retrieved from the receive pipe
     {
       radio.read( &myData, sizeof(myData) );             // Get the data
@@ -139,9 +140,8 @@ void loop()
   else 
   {
     stopRobotMovement();
-    return;
   }
-  processMovement();
+  //processMovement();
 }
 void processMovement()
 {
