@@ -1,11 +1,4 @@
-/* YourDuinoStarter Example: nRF24L01 Radio Remote control: Joystick to Servos
-  - WHAT IT DOES
-   Joystick on this Arduino communicates by nRF25L01 Radio to
-   a second Arduino with an nRF24L01 radio and 2 pan-tilt servos
-   SEE: The variable 'hasHardware'. You can test without Joystick and later set hasHardware = true;
-
-  - SEE the comments after "//" on each line below
-  - CONNECTIONS:
+/* - CONNECTIONS:
    - nRF24L01 Radio Module: See http://arduino-info.wikispaces.com/Nrf24L01-2.4GHz-HowTo
    1 - GND
    2 - VCC 3.3V !!! NOT 5V
@@ -22,14 +15,16 @@
 /*-----( Import needed libraries )-----*/
 #include <SPI.h>   // Comes with Arduino IDE
 #include "RF24.h"  // Download and Install (See above)
-#include "printf.h" // Needed for "printDetails" Takes up some memory
+//#include "printf.h" // Needed for "printDetails" Takes up some memory
 /*-----( Declare Constants and Pin Numbers )-----*/
 #define  CE_PIN  7   // The pins to be used for CE and SN
 #define  CSN_PIN 8
 
 #define JOYSTICK_X   A0  // The Joystick potentiometers connected to Arduino Analog inputs
 #define JOYSTICK_Y   A1
-#define JOYSTICK_SW  A2  // The Joystick push-down switch, will be used as a Digital input
+//#define JOYSTICK_SW  A4  // The Joystick push-down switch, will be used as a Digital input
+#define JOYSTICK2_X  A2
+#define JOYSTICK2_Y  A3
 
 /*-----( Declare objects )-----*/
 /* Hardware configuration: Set up nRF24L01 radio on SPI bus plus (usually) pins 7 & 8 (Can be changed) */
@@ -55,7 +50,9 @@ struct dataStruct {
   unsigned long _micros;  // to save response times
   int Xposition;          // The Joystick position values
   int Yposition;
-  bool switchOn;          // The Joystick push-down switch
+  int X2position;
+  int Y2position;
+//  bool switchOn;          // The Joystick push-down switch
 } myData;                 // This can be accessed in the form:  myData.Xposition  etc.
 
 
@@ -64,8 +61,8 @@ void setup()   /****** SETUP: RUNS ONCE ******/
   Serial.begin(115200);  // MUST reset the Serial Monitor to 115200 (lower right of window )
   // NOTE: The "F" in the print statements means "unchangable data; save in Flash Memory to conserve SRAM"
   Serial.println(F("YourDuino.com Example: Send joystick data by nRF24L01 radio to another Arduino"));
-  printf_begin(); // Needed for "printDetails" Takes up some memory
-  pinMode(JOYSTICK_SW, INPUT_PULLUP);  // Pin A2 will be used as a digital input
+//  printf_begin(); // Needed for "printDetails" Takes up some memory
+//  pinMode(JOYSTICK_SW, INPUT_PULLUP);  // Pin A2 will be used as a digital input
 
   radio.begin();          // Initialize the nRF24L01 Radio
   radio.setChannel(108);  // Above most WiFi frequencies
@@ -97,12 +94,16 @@ void loop()   /****** LOOP: RUNS CONSTANTLY ******/
     /*********************( Read the Joystick positions )*************************/
     myData.Xposition = analogRead(JOYSTICK_X);
     myData.Yposition = analogRead(JOYSTICK_Y);
-    myData.switchOn  = !digitalRead(JOYSTICK_SW);  // Invert the pulldown switch
+    myData.X2position = analogRead(JOYSTICK2_X);
+    myData.Y2position = analogRead(JOYSTICK2_Y);
+//    myData.switchOn  = !digitalRead(JOYSTICK_SW);  // Invert the pulldown switch
   }
   else
   {
     myData.Xposition = 256;  // Send some known fake data
     myData.Yposition = 512;
+    myData.X2position = 0;
+    myData.Y2position = 128;
   }
 
   myData._micros = micros();  // Send back for timing
